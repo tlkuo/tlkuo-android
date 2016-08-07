@@ -4,5 +4,6 @@
     <string name="button_send">Send</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_headlines_fragment">Hello headlines fragment</string>
+    <string name="hello_article_fragment">Hello article fragment</string>
 </resources>
