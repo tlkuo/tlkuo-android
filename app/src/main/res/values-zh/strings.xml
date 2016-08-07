@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">準備開始</string>
+    <string name="edit_message">輸入一則訊息</string>
+    <string name="button_send">送出</string>
+</resources>
