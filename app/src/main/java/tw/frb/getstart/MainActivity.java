@@ -6,7 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity
+    implements HeadlinesFragment.OnHeadlineSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +69,29 @@ public class MainActivity extends FragmentActivity {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    public void showArticle(View view) {
-        ArticleFragment newFragment = new ArticleFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+    @Override
+    public void onArticleSelected(int position) {
 
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        // FIXME: confuse in landscape and portrait
+        ArticleFragment articleFrag = (ArticleFragment)
+                getSupportFragmentManager().findFragmentById(R.id.article_fragment);
+
+        if (articleFrag != null) {
+            // two-pane layout
+            articleFrag.updateArticleView(position);
+        } else {
+            // one-pane layout
+            ArticleFragment newFragment = new ArticleFragment();
+            Bundle args = new Bundle();
+            args.putInt(ArticleFragment.ARG_POSITION, position);
+            newFragment.setArguments(args);
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            transaction.replace(R.id.fragment_container, newFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 }
 
