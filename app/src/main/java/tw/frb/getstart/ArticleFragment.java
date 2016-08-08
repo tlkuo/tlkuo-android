@@ -1,6 +1,8 @@
 package tw.frb.getstart;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -29,8 +31,6 @@ public class ArticleFragment extends Fragment {
 
         if (args != null) {
             updateArticleView(args.getInt(ARG_POSITION));
-        } else {
-            updateArticleView(0);
         }
 
         // Inflate the layout for this fragment
@@ -39,5 +39,10 @@ public class ArticleFragment extends Fragment {
 
     public void updateArticleView(int position) {
         Log.d("args", String.valueOf(position));
+
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        int prefPosition = sharedPref.getInt(getString(R.string.saved_position), 0);
+
+        Log.d("pref", String.valueOf(prefPosition));
     }
 }

@@ -71,12 +71,10 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onArticleSelected(int position) {
-
-        // FIXME: confuse in landscape and portrait
         ArticleFragment articleFrag = (ArticleFragment)
                 getSupportFragmentManager().findFragmentById(R.id.article_fragment);
 
-        if (articleFrag != null) {
+        if (articleFrag != null && articleFrag.getActivity() != null) {
             // two-pane layout
             articleFrag.updateArticleView(position);
         } else {

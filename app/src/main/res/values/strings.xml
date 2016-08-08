@@ -6,4 +6,6 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_headlines_fragment">Hello headlines fragment</string>
     <string name="hello_article_fragment">Hello article fragment</string>
+
+    <string name="saved_position">tw.frb.getstart.pref.POSITION</string>
 </resources>
