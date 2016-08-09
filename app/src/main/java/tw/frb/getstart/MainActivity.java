@@ -1,5 +1,6 @@
 package tw.frb.getstart;
 
+import android.os.Environment;
 import android.os.PersistableBundle;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -90,6 +91,27 @@ public class MainActivity extends FragmentActivity
             transaction.addToBackStack(null);
             transaction.commit();
         }
+    }
+
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+
+        if (Environment.MEDIA_MOUNTED.equals(state) ||
+            Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
+        }
+
+        return false;
     }
 }
 
