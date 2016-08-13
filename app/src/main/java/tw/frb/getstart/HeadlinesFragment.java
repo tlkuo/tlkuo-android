@@ -1,11 +1,15 @@
 package tw.frb.getstart;
 
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +27,8 @@ public class HeadlinesFragment extends ListFragment {
 
     OnHeadlineSelectedListener mCallback;
 
+    FeedReaderContract.FeedReaderDbHelper mDbHelper;
+
     public interface OnHeadlineSelectedListener {
         public void onArticleSelected(int position);
     }
@@ -39,6 +45,8 @@ public class HeadlinesFragment extends ListFragment {
         listAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, list);
 
         setListAdapter(listAdapter);
+
+        mDbHelper = new FeedReaderContract.FeedReaderDbHelper(getActivity());
 
         return inflater.inflate(R.layout.fragment_headline, container, false);
     }
@@ -59,11 +67,80 @@ public class HeadlinesFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
+//        insertToDatabase();
+//        selectFromDatabase();
+//        deleteFromDatabase();
+//        updateDatabase();
+
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(getString(R.string.saved_position), position);
         editor.commit();
 
         mCallback.onArticleSelected(position);
+    }
+
+
+    private void insertToDatabase() {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_ENTRY_ID, 1);
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE, "title");
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_SUBTITLE, "subtitle");
+
+        long newRowId = db.insert(FeedReaderContract.FeedEntry.TABLE_NAME, "null", values);
+        Log.d("SQLite", "newRowId: " + String.valueOf(newRowId));
+    }
+
+    private void selectFromDatabase() {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String[] projection = {
+            FeedReaderContract.FeedEntry._ID,
+            FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE
+        };
+
+        Cursor c = db.query(
+                FeedReaderContract.FeedEntry.TABLE_NAME, // The table to query
+                projection, // The columns to return
+                null,       // The columns for the WHERE clause
+                null,       // The values for the WHERE clause
+                null,       // don't group the rows
+                null,       // don't filter by row groups
+                null        // The sort order
+        );
+
+        c.moveToFirst();
+        long itemId = c.getLong(c.getColumnIndexOrThrow(FeedReaderContract.FeedEntry._ID));
+        String itemTitle = c.getString(c.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE));
+        Log.d("SQLite", "itemId: " + String.valueOf(itemId) + " itemTitle: " + itemTitle);
+    }
+
+    private void deleteFromDatabase() {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String selection = FeedReaderContract.FeedEntry.COLUMN_NAME_ENTRY_ID + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(1) };
+
+        int count = db.delete(FeedReaderContract.FeedEntry.TABLE_NAME, selection, selectionArgs);
+        Log.d("SQLite", "delete: " + String.valueOf(count));
+    }
+
+    private void updateDatabase() {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE, "updated title");
+
+        String selection = FeedReaderContract.FeedEntry.COLUMN_NAME_ENTRY_ID + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(1) };
+
+        int count = db.update(
+            FeedReaderContract.FeedEntry.TABLE_NAME,
+            values,
+            selection,
+            selectionArgs
+        );
+
+        Log.d("SQLite", "update: " + String.valueOf(count));
     }
 }
