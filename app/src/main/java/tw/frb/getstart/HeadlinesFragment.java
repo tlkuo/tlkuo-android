@@ -3,9 +3,12 @@ package tw.frb.getstart;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
@@ -15,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import java.util.List;
 
 
 /**
@@ -71,6 +76,8 @@ public class HeadlinesFragment extends ListFragment {
 //        selectFromDatabase();
 //        deleteFromDatabase();
 //        updateDatabase();
+
+//        viewWebPage();
 
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -142,5 +149,28 @@ public class HeadlinesFragment extends ListFragment {
         );
 
         Log.d("SQLite", "update: " + String.valueOf(count));
+    }
+
+    private void viewWebPage() {
+        Uri webpage = Uri.parse("http://www.google.com");
+        Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
+
+        PackageManager packageManager = getActivity().getPackageManager();
+        List activities = packageManager.queryIntentActivities(webIntent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        boolean isIntentSafe = activities.size() > 0;
+
+        if (isIntentSafe) {
+//            startActivity(webIntent);
+            showChooser(webIntent);
+        }
+    }
+
+    private void showChooser(Intent intent) {
+        Intent chooser = Intent.createChooser(intent, "View Web Page with");
+
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(chooser);
+        }
     }
 }
